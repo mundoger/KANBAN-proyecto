@@ -9,17 +9,31 @@ kanban_columns = [
     {"id":"done","title":"Hecho","tasks":[]}
 ]
 
+
 @app.route('/')
 def index():
-    return render_template('kanban.html')
+    return render_template('kanban.html',columns=kanban_columns)
+
+@app.route("/get_columns")
+def get_columns():
+    return jsonify(kanban_columns)
 
 @app.route('/api/columns', methods=['GET','POST'])
+
+
 def manage_columns():
     if request.method == 'POST':
         new_column=request.json
         kanban_columns.append(new_column)
         return jsonify(kanban_columns)
     return jsonify(kanban_columns)
+
+def add_column():
+    data=request.get_json()
+    new_column={
+        'id': data['id'],
+        'title': data['title']
+    }
 
 @app.route('/api/tasks',methods=['POST','DELETE','PUT'])
 def manage_tasks():

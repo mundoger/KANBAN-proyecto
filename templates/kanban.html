@@ -33,7 +33,16 @@
             </div>
 
             <div id="kanban-board" class="d-flex overflow-auto">
-                
+                <script>
+                    document.addEventListener("DOMContentLoaded", function(){
+                        fetch('/get_columns')
+                        .then(reponse => reponse.json())
+                        .then(columns => {
+                            displayColumns(columns);
+                        })
+                        .catch(error => console.error('Error al cargar columnas:', error));
+                    });
+                </script>
             </div>
         </main>
         <footer>
@@ -51,7 +60,8 @@
             integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
             crossorigin="anonymous"
         ></script>
-
+       <!--- <script src="{{url_for('static',filename='js/kanban.js')}}"></script>-->
+        <script src="{{url_for('static',filename='js/script.js')}}"></script>
 
     </body>
 </html>

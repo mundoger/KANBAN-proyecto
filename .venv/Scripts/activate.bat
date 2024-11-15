@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\mundo\Proyectos\07_ENCUESTA_PREFERENCIAS\.venv
+set VIRTUAL_ENV=C:\Users\mundo\Proyectos\KANBAN-proyecto\.venv
 
 if not defined PROMPT set PROMPT=$P$G
 
