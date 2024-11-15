@@ -30,20 +30,28 @@
                     <input id="new-column-title" type="text" class="form-control mr-2" placeholder="Nuevo título de columna">
                     <button onclick="addColumn()" class="btn btn-primary">Añadir columna</button>
                 </div>
+
+
+                <div id="kanban-board" class="d-flex overflow-auto">
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function(){
+                            fetch('/get_columns')
+                            .then(reponse =>{
+                                if (!reponse.ok){
+                                    throw new Error(`HTTP error! status: ${response.status}`)
+                                }
+                                return reponse.json()
+                            }) 
+                            .then(columns => {
+                                displayColumns(columns);
+                            })
+                            .catch(error => console.error('Error al cargar columnas:', error));
+                        });
+                    </script>
+                </div>
             </div>
 
-            <div id="kanban-board" class="d-flex overflow-auto">
-                <script>
-                    document.addEventListener("DOMContentLoaded", function(){
-                        fetch('/get_columns')
-                        .then(reponse => reponse.json())
-                        .then(columns => {
-                            displayColumns(columns);
-                        })
-                        .catch(error => console.error('Error al cargar columnas:', error));
-                    });
-                </script>
-            </div>
+            
         </main>
         <footer>
             <!-- place footer here -->

@@ -1,41 +1,40 @@
 // Función para cargar las columnas y tareas desde el LocalStorage
 function loadColumns(){
-    const columnsData = localStorage.getItem('kanbanColumns');
-    const columns = columnsData ? JSON.parse(columnsData) : [];
-    displayColumns(columns);
+    const storedColumns = JSON.parse(localStorage.getItem('columns')) || [];
+    fetch('/get_columns')
+        .then(response => response.json())
+        .then(serverColumns => {
+            const combinedColumns = [...serverColumns,...storedColumns];
+            displayColumns(combinedColumns);          
+        })
+        .catch(error=>console.error('Error al cargar columnas iniciales:',error));
+
+
+
+
+    // const columnsData = localStorage.getItem('kanbanColumns');
+    // const columns = columnsData ? JSON.parse(columnsData) : [];
+    // displayColumns(columns);
 }
 
 
-//Función para añadir una nueva columna
-function addColumn() {
-    const titleInput = document.getElementById('new-column-title');
-    const title = titleInput.value.trim();
 
-
-    if(!title) {
-        alert('Por favor, introduce un título para la columna.');
-        return;
-    }
-
-    const columnsData = localStorage.getItem('kanbanColumns');
-    const columns =columnsData ? JSON.parse(columnsData):[];
-
-    const newColumn = {
-        id: Date.now().toString(),
-        title: title,
-        tasks: []
-    };
-
-    columns.push(newColumn);
-    localStorage.setItem('kanbanColumns', JSON.stringify(columns));
-    displayColumns(columns);
-    titleInput.value='';
-    
-}
 
 //Mostrar columnas en el HTML
 function displayColumns(columns){
-    const board = document.getElementById('kanban-board');
+    // //Obtener columnas predeterminadas desde la ruta inicial
+    // const initialColumns = JSON.parse(document.getElementById("kanban-board").getAttribute("data-columns"));
+
+    // //Obtener columnas almacenadas en localStorage
+    // const storedColumns = JSON.parse(localStorage.getItem('columns')) || [];
+
+    // //Combinación de columnas
+    // const combinedColumns = [...initialColumns,...storedColumns];
+
+
+
+    const board = document.getElementById("kanban-board");
+
     board.innerHTML='';
 
     const columnCount = columns.length;
@@ -69,6 +68,52 @@ function displayColumns(columns){
         board.appendChild(columnDiv);
     });
 }
+
+//Función para añadir una nueva columna
+function addColumn() {
+    const titleInput = document.getElementById('new-column-title');
+    const title = titleInput.value.trim();
+
+
+    if(!title) {
+        alert('Por favor, introduce un título para la columna.');
+        return;
+    }
+
+    // const columnsData = localStorage.getItem('kanbanColumns');
+    // const columns =columnsData ? JSON.parse(columnsData):[];
+
+    const newColumn = {
+        id:`col-${Date.now()}`,
+        //id: Date.now().toString(),
+        title: title,
+        tasks: []
+    };
+
+    //Agregar nueva columna
+    const storedColumns=JSON.parse(localStorage.getItem('columns')) || [];
+    storedColumns.push(newColumn);
+    localStorage.setItem('columns',JSON.stringify(storedColumns));
+
+    fetch('/get_columns')
+        .then(response => response.json())
+        .then(serverColumns => {
+            const combinedColumns = [...serverColumns,...storedColumns];
+            displayColumns(combinedColumns);          
+        })
+        .catch(error=>console.error('Error al cargar columnas iniciales:',error));
+
+
+
+    // columns.push(newColumn);
+    // localStorage.setItem('kanbanColumns', JSON.stringify(columns));
+
+
+    
+    titleInput.value='';
+    
+}
+
 
 //Inicializar el tablero al cargar la página
 document.addEventListener('DOMContentLoaded',loadColumns);

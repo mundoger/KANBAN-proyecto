@@ -4,7 +4,7 @@ app=Flask(__name__)
 
 #Definición de columnas
 kanban_columns = [
-    {"id":"todo","title":"Por hacer","tasks":[]},
+    {"id":"forDo","title":"Por hacer","tasks":[]},
     {"id":"inProgress","title":"En progreso","tasks":[]},
     {"id":"done","title":"Hecho","tasks":[]}
 ]
