@@ -18,16 +18,27 @@ def index():
 def get_columns():
     return jsonify(kanban_columns)
 
-@app.route('/api/columns', methods=['GET','POST'])
 
+#---------------COLUMNAS-------------------
+@app.route('/api/columns', methods=['GET','POST','DELETE','PUT'])
+
+# def get_columns():
+#     return jsonify(kanban_columns)
 
 def manage_columns():
+    #Agregar una columna
     if request.method == 'POST':
         new_column=request.json
         kanban_columns.append(new_column)
         return jsonify(kanban_columns)
+    #Borrar una columna
+    elif request.method == 'DELETE':
+        pass
+    #Actualizar una columna
+    elif request.method == 'PUT':
+        pass
     return jsonify(kanban_columns)
-
+    
 def add_column():
     data=request.get_json()
     new_column={
@@ -35,6 +46,7 @@ def add_column():
         'title': data['title']
     }
 
+#---------------TAREAS-------------------
 @app.route('/api/tasks',methods=['POST','DELETE','PUT'])
 def manage_tasks():
     data=request.json

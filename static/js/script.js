@@ -9,30 +9,10 @@ function loadColumns(){
         })
         .catch(error=>console.error('Error al cargar columnas iniciales:',error));
 
-
-
-
-    // const columnsData = localStorage.getItem('kanbanColumns');
-    // const columns = columnsData ? JSON.parse(columnsData) : [];
-    // displayColumns(columns);
 }
-
-
-
 
 //Mostrar columnas en el HTML
 function displayColumns(columns){
-    // //Obtener columnas predeterminadas desde la ruta inicial
-    // const initialColumns = JSON.parse(document.getElementById("kanban-board").getAttribute("data-columns"));
-
-    // //Obtener columnas almacenadas en localStorage
-    // const storedColumns = JSON.parse(localStorage.getItem('columns')) || [];
-
-    // //Combinación de columnas
-    // const combinedColumns = [...initialColumns,...storedColumns];
-
-
-
     const board = document.getElementById("kanban-board");
 
     board.innerHTML='';
@@ -50,21 +30,9 @@ function displayColumns(columns){
         headerDiv.className="p-3 text-center border bg-light";
         const title=document.createElement("h2");
         title.textContent=column.title;
+
         headerDiv.appendChild(title);
-
-
-
-        // const columnElement = document.createElement('div');
-        // columnElement.className = 'p-3 text-center border bg-light'
-        // columnElement.innerHTML=`
-        // <h2>${column.title}</h2>
-        // <div id="tasks-${column.id}" class="kanban-tasks"></div>
-        // `;
-
-        // Agregar el encabezado y las tareas al contenedor de la columna
-        columnDiv.appendChild(headerDiv);
-        //columnDiv.appendChild(tasksDiv);
-        
+        columnDiv.appendChild(headerDiv);        
         board.appendChild(columnDiv);
     });
 }
@@ -80,12 +48,8 @@ function addColumn() {
         return;
     }
 
-    // const columnsData = localStorage.getItem('kanbanColumns');
-    // const columns =columnsData ? JSON.parse(columnsData):[];
-
     const newColumn = {
         id:`col-${Date.now()}`,
-        //id: Date.now().toString(),
         title: title,
         tasks: []
     };
@@ -103,17 +67,9 @@ function addColumn() {
         })
         .catch(error=>console.error('Error al cargar columnas iniciales:',error));
 
-
-
-    // columns.push(newColumn);
-    // localStorage.setItem('kanbanColumns', JSON.stringify(columns));
-
-
-    
     titleInput.value='';
     
 }
-
 
 //Inicializar el tablero al cargar la página
 document.addEventListener('DOMContentLoaded',loadColumns);
@@ -152,11 +108,7 @@ document.addEventListener('DOMContentLoaded',loadColumns);
 // }
 
 // // Función para crear un elemento de tarea en el DOM
-// function createTaskElement(task){
-//     const taskElement = document.createElement('div');
-//     taskElement.className='task';
-//     taskElement.dataset.id=task.id;
-// }
+
 
 // // Función para añadir una nueva tarea a una columna
 
