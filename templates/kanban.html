@@ -35,10 +35,10 @@
                 <div id="kanban-board" class="d-flex overflow-auto">
                     <script>
                         document.addEventListener("DOMContentLoaded", function(){
-                            fetch('/get_columns')
+                            fetch('/api/columns')
                             .then(reponse =>{
                                 if (!reponse.ok){
-                                    throw new Error(`HTTP error! status: ${response.status}`)
+                                    throw new Error(`HTTP error! status: ${reponse.status}`)
                                 }
                                 return reponse.json()
                             }) 
@@ -56,6 +56,11 @@
         <footer>
             <!-- place footer here -->
         </footer>
+
+
+        <!-- jsDelivr :: Sortable :: Latest (https://www.jsdelivr.com/package/npm/sortablejs) -->
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
         <!-- Bootstrap JavaScript Libraries -->
         <script
             src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"

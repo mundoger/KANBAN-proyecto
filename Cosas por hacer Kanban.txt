@@ -1,8 +1,8 @@
 Columnas:
-1. Poder mover de lugar las columnas.
-2. Poner limite de n cantidad.
-3. Borrar columnas.
-4. Cambiar nombre de columnas.
+LISTO 1. Poder mover de lugar las columnas.
+LISTO 2. Poner limite de n cantidad.
+LISTO 3. Borrar columnas.
+LISTO 4. Cambiar nombre de columnas.
 
 Tareas:
 1. Poder mover las tareas.
