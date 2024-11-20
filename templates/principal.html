@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Hamburguesa</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/principal.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tabla.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/invitacion.css') }}">
+    <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
+<style>
+    #whatsapp-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        width: 60px;
+        height: 60px;
+    }
+
+    #whatsapp-widget img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar-container">
+        <!-- Botón para el menú en dispositivos móviles -->
+        <button id="menu-toggle" class="menu-toggle">
+            ☰
+        </button>
+
+        <!-- Logo -->
+        <a href="/" class="navbar-logo">
+            <img src="{{ url_for('static', filename='image/.png') }}" alt="Logo" >
+        </a>
+
+        <!-- Formulario de búsqueda -->
+        <form id="search-form" class="search-form">
+            <input type="text" id="search-input" class="search-input" placeholder="Buscar personas o proyectos...">
+        </form>
+
+        <!-- Menú Lateral -->
+        <section>
+            <div id="side-menu" class="side-menu">
+                <button id="close-btn" class="close-btn">×</button>
+                <a href="/" class="side-menu-item">Inicio</a>
+                <a href="/modo-solitario" class="side-menu-item">Mensajes</a>
+                <!--<a href="/modo-presentacion" class="side-menu-item">Colaboradores</a>-->
+                <a href="https://calendar.google.com/" target="_blank" class="side-menu-item">Calendario</a>
+                <!--<a href="/gestion-riesgos" class="side-menu-item">Gestión de Riesgos</a> -->
+                <a href="#" id="openInviteModal" class="side-menu-item">Invitar</a>
+                <div class="modal-container" id="inviteModal">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Invitar Usuarios</h2>
+                            <p class="card-description">Invita a nuevos miembros a tu proyecto</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="input-group">
+                                <label class="label" for="email">Correo Electrónico</label>
+                                <div class="input-wrapper">
+                                    <input
+                                            type="email"
+                                            id="email"
+                                            class="input"
+                                            placeholder="usuario@ejemplo.com"
+                                    >
+                                    <button class="button" onclick="handleInvite()">
+                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        Invitar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="label">Enlace de Invitación</label>
+                                <div class="link-container">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
+                                        <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                                    </svg>
+                                    <span class="link-text" id="inviteLink">https://tuapp.com/invitar/abc123</span>
+                                    <button class="icon-button" onclick="copyLink()" id="copyButton">
+                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="" class="side-menu-item">Cerrar Sesion</a>
+            </div>
+        </section>
+
+        <section>
+            <div class="navbar-icons">
+                <span id="current-time" class="current-time">12:00 PM</span>
+
+                <div class="notification-container">
+                    <button class="icon-button">
+                        <img src="{{ url_for('static', filename='image/notificacion.png') }}" alt="Notificaciones">
+                        <span class="notification-badge">3</span>
+                    </button>
+
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h3 style="margin: 0">Notificaciones</h3>
+                        </div>
+
+                        <div class="notification-list">
+                            <div class="notification-item">
+                                <div class="notification-icon icon-task">✓</div>
+                                <div class="notification-content">
+                                    <p class="notification-text">Nueva tarea asignada: "Diseño de landing page"</p>
+                                    <p class="notification-time">10:30 AM</p>
+                                </div>
+                                <button class="mark-read-btn">Marcar como leída</button>
+                            </div>
+
+                            <div class="notification-item read">
+                                <div class="notification-icon icon-mention">@</div>
+                                <div class="notification-content">
+                                    <p class="notification-text">Juan te mencionó en un comentario</p>
+                                    <p class="notification-time">Ayer</p>
+                                </div>
+                            </div>
+
+                            <div class="notification-item">
+                                <div class="notification-icon icon-reminder">⏰</div>
+                                <div class="notification-content">
+                                    <p class="notification-text">Recordatorio: Reunión de equipo a las 2 PM</p>
+                                    <p class="notification-time">En 1 hora</p>
+                                </div>
+                                <button class="mark-read-btn">Marcar como leída</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="icon-button">
+                    <img src="{{ url_for('static', filename='image/ajuste.png') }}" alt="Ajustes">
+                </button>
+                <button class="user-avatar">
+                    <a href="{{ url_for('perfil') }}"><img id="navbar-avatar" src="{{ url_for('static', filename='image/ajuste.png') }}" alt="User Avatar">
+                        <a/>
+                </button>
+            </div>
+        </section>
+    </div>
+</nav>
+
+<script>
+    // Sincronización del avatar en el navbar
+    document.addEventListener("DOMContentLoaded", () => {
+        const navbarAvatar = document.getElementById("navbar-avatar");
+
+        // Cargar la imagen guardada en localStorage
+        const savedImage = localStorage.getItem("profileImage");
+        if (savedImage) {
+            navbarAvatar.src = savedImage;
+        }
+
+        // Sincronizar con el cambio del perfil (si es dinámico)
+        document.addEventListener("profileImageChanged", (event) => {
+            const newImage = event.detail.newImage;
+            navbarAvatar.src = newImage;
+        });
+    });
+</script>
+
+<br><br><br><br>
+
+<div class="container">
+    <div class="header">
+        <h1 class="title">Mis tareas ★</h1>
+        <a href="{{ url_for('tareas') }}">
+            <button class="create-btn">CREAR NUEVA TAREA</button>
+        </a>
+    </div>
+</div>
+<br><br>
+
+<div class="table-container">
+    <table>
+        <thead>
+        <tr>
+            <th data-column="name">Nombre</th>
+            <th data-column="name"> Descripcion</th>
+            <th data-column="status">Estado</th>
+            <th data-column="startDate">Fecha de Inicio</th>
+            <th data-column="priority">Prioridad</th>
+        </tr>
+        </thead>
+        <tbody id="projectsTableBody">
+        <tr>
+            <td>Proyecto A</td>
+            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi, officiis.</td>
+            <td><span class="status status-progress">En progreso</span></td>
+            <td>2023-05-15</td>
+            <td><span class="priority priority-high">Alta</span></td>
+        </tr>
+        <tr>
+            <td>Proyecto B</td>
+            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi, officiis.</td>
+            <td><span class="status status-completed">Completado</span></td>
+            <td>2023-04-01</td>
+            <td><span class="priority priority-medium">Media</span></td>
+        </tr>
+        <tr>
+            <td>Proyecto C</td>
+            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi, officiis.</td>
+            <td><span class="status status-pending">Pendiente</span></td>
+            <td>2023-06-10</td>
+            <td><span class="priority priority-low">Baja</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<a href="https://wa.me/1234567890?text=¡Hola! Estoy interesado en más información."
+   target="_blank"
+   id="whatsapp-widget">
+   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
+</a>
+
+
+<script>
+    // Sincronización del avatar en el navbar
+    document.addEventListener("DOMContentLoaded", () => {
+        const navbarAvatar = document.getElementById("navbar-avatar");
+        const savedImage = localStorage.getItem("profileImage");
+        if (savedImage) {
+            navbarAvatar.src = savedImage;
+        }
+        document.addEventListener("profileImageChanged", (event) => {
+            const newImage = event.detail.newImage;
+            navbarAvatar.src = newImage;
+        });
+    });
+
+    // Manejo del sistema de notificaciones
+    const iconButton = document.querySelector('.icon-button');
+    const dropdown = document.getElementById('notificationDropdown');
+
+    iconButton.addEventListener('click', () => {
+        dropdown.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.notification-container')) {
+            dropdown.classList.remove('active');
+        }
+    });
+
+    const markReadButtons = document.querySelectorAll('.mark-read-btn');
+    markReadButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            const notificationItem = event.target.closest('.notification-item');
+            notificationItem.classList.add('read');
+            button.remove();
+            updateNotificationCount();
+        });
+    });
+
+    function updateNotificationCount() {
+        const unreadCount = document.querySelectorAll('.notification-item:not(.read)').length;
+        const badge = document.querySelector('.notification-badge');
+        if (unreadCount === 0) {
+            badge.style.display = 'none';
+        } else {
+            badge.style.display = 'block';
+            badge.textContent = unreadCount;
+        }
+    }
+</script>
+
+<script>
+    // Variables
+    const modal = document.getElementById('inviteModal');
+    const openInviteModal = document.getElementById('openInviteModal');
+    const emailInput = document.getElementById('email');
+    const copyButton = document.getElementById('copyButton');
+    const inviteLink = 'https://tuapp.com/invitar/abc123';
+
+    // Abrir modal desde el menú
+    openInviteModal.addEventListener('click', (e) => {
+        e.preventDefault(); // Evita la redirección
+        modal.classList.add('active');
+    });
+
+    // Cerrar modal al hacer clic fuera
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+
+    // Manejar invitación
+    function handleInvite() {
+        const email = emailInput.value;
+        if (email) {
+            console.log('Invitación enviada a:', email);
+            emailInput.value = '';
+            // Aquí irían las llamadas a tu backend
+        }
+    }
+
+    // Copiar enlace
+    function copyLink() {
+        navigator.clipboard.writeText(inviteLink);
+        const originalIcon = copyButton.innerHTML;
+
+        // Cambiar al ícono de check
+        copyButton.innerHTML = `
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        `;
+
+        // Volver al ícono original después de 2 segundos
+        setTimeout(() => {
+            copyButton.innerHTML = originalIcon;
+        }, 2000);
+    }
+</script>
+<script>
+    // Variables
+    const menuToggle = document.getElementById('menu-toggle');
+    const sideMenu = document.getElementById('side-menu');
+    const closeBtn = document.getElementById('close-btn');
+
+    // Abrir menú lateral
+    menuToggle.addEventListener('click', () => {
+        sideMenu.classList.add('active');
+    });
+
+    // Cerrar menú lateral
+    closeBtn.addEventListener('click', () => {
+        sideMenu.classList.remove('active');
+    });
+</script>
+
+<script>
+    // Función para mostrar/ocultar el menú desplegable
+    function toggleDropdown() {
+        document.getElementById('createDropdown').classList.toggle('show');
+    }
+
+    // Cierra el dropdown si se hace clic fuera de él
+    window.onclick = function(event) {
+        if (!event.target.matches('.create-btn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+
+</body>
+</html>

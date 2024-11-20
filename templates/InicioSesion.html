@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación - Mi Aplicación</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/Login.css') }}">
+    <script src="{{ url_for('static', filename='js/cambio_pestania.js') }}"  defer></script>
+</head>
+
+<body>
+<div class="container">
+    <div class="left-section">
+        <div class="app-logo" style="width: 20%">
+            <img style="background-color: #0b524d" src="" alt="">
+        </div>
+
+    </div>
+    <div class="right-section">
+        <div class="auth-container">
+            <div class="tabs">
+                <div class="tab-list">
+                    <div class="tab active" data-tab="login">Iniciar Sesión</div>
+                    <div class="tab" data-tab="register">Crear Cuenta</div>
+                </div>
+                <div class="tab-content active" id="login">
+                    <div class="card">
+                        <h2 class="card-title">Iniciar Sesión</h2>
+                        <p class="card-description">Ingresa tus datos para acceder a tu cuenta.</p>
+
+                        <form action="/inicar-pantalla" method="GET">
+                            <div class="form-group">
+                                <label for="email">Correo Electrónico</label>
+                                <input type="email" id="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Contraseña</label>
+                                <input type="password" id="password" required>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="remember">
+                                <label for="remember">Recordarme</label>
+                            </div>
+                            <a href="{{ url_for('principal') }}" class="cta-button">Registrate </a>
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-content" id="register">
+                    <div class="card">
+                        <h2 class="card-title">Crear Cuenta</h2>
+                        <p class="card-description">Ingresa tus datos para crear una nueva cuenta.</p>
+                        <form>
+                            <div class="form-group">
+                                <label for="register-name">Nombre Completo</label>
+                                <input type="text" id="register-name" placeholder="" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-email">Correo Electrónico</label>
+                                <input type="email" id="register-email" placeholder="" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-password">Contraseña</label>
+                                <input type="password" id="register-password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Confirmar Contraseña</label>
+                                <input type="password" id="confirm-password" required>
+                            </div>
+                            <a href="{{ url_for('principal') }}" class="cta-button">Crear Cuenta </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <p class="terms">
+                Al hacer clic en continuar, aceptas nuestros
+                <a href="/terms">Términos de servicio</a> y
+                <a href="/privacy">Política de privacidad</a>.
+            </p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

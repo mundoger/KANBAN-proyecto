@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/perfil.css') }}">
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">Perfil de Usuario</h1>
+        </div>
+        <div class="card-content">
+            <form>
+                <div class="avatar-section">
+                    <div class="avatar">
+                        <img id="profile-pic" src="default-avatar.png" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%;">
+                    </div>
+                    <input type="file" id="upload" accept="image/*" style="display: none;">
+                    <button type="button" class="button" id="change-photo">Cambiar Foto</button>
+                </div>
+                <div class="form-group">
+                    <label class="label" for="nombre">
+                        Nombre
+                    </label>
+                    <input type="text" id="nombre" class="input" value="Usuario Ejemplo">
+                </div>
+                <div class="form-group">
+                    <label class="label" for="email">
+                        Email
+                    </label>
+                    <input type="email" id="email" class="input" value="usuario@ejemplo.com">
+                </div>
+                <div class="switch-container">
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <label class="label">Recibir notificaciones</label>
+                </div>
+                <button type="submit" class="button submit-button">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Código JavaScript para cambiar y guardar la foto
+        document.addEventListener("DOMContentLoaded", () => {
+            const profilePic = document.getElementById("profile-pic");
+            const uploadInput = document.getElementById("upload");
+            const changePhotoButton = document.getElementById("change-photo");
+
+            // Cargar la foto guardada
+            const savedImage = localStorage.getItem("profileImage");
+            if (savedImage) {
+                profilePic.src = savedImage;
+            }
+
+            // Abrir selector de archivo
+            changePhotoButton.addEventListener("click", () => {
+                uploadInput.click();
+            });
+
+            // Cambiar la foto y guardarla
+            uploadInput.addEventListener("change", (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const newImage = e.target.result;
+                        profilePic.src = newImage;
+
+                        // Guardar en localStorage
+                        localStorage.setItem("profileImage", newImage);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

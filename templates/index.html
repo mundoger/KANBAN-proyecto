@@ -1,76 +1,114 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <title>Title</title>
-        <!-- Required meta tags -->
-        <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        />
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JG flow with Kanban boards</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/pruebas.css') }}">
+    <script src="{{ url_for('static', filename='js/acordeon.js') }}"  defer></script>
+</head>
 
-        <!-- Bootstrap CSS v5.2.1--> 
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
-
-    <body>
+<body>
+<div class="main-wrapper">
+    <div class="container">
         <header>
-            <!-- place navbar here -->
+            <div class="logo">
+                <img src="{{ url_for('static', filename='image/logo.png')}}" alt="ClickUp Logo">
+                <span>JG flow</span>
+            </div>
+            <nav>
+                <a href=""><button class="sign-up-btn" >Registrarse</button></a>
+                <a href="{{ url_for('InicioSesion') }}" ><button class="sign-up-btn">Acceso</button></a>
+            </nav>
         </header>
-        <main>
-            <div class="container">
-                <div class="row">
-                    <!--Primer columna "Por Hacer"-->
-                    <div class="col-md-4">
-                        <div class="p-3 text-center border bg-light">
-                            <h1>Por hacer</h1>
-                        </div>
-                        <div id="PorHacerContenido">
-                            
-                        </div>
-                    </div>
+    </div>
 
-                    <!--Segunda columna "En Proceso"-->
-                    <div class="col-md-4">
-                        <div class="p-3 text-center border bg-light">
-                            <h1>En proceso</h1>
-                        </div>
-                        <div class="EnProcesoContenido">
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Potencie su trabajo con tableros Kanban.</h1>
+                <p>Con los tableros Kanban de JG Flow, obtenga visibilidad total, controle el trabajo en progreso y mejore la productividad sin esfuerzo.</p>
+                <a href="{{ url_for('InicioSesion') }}" class="cta-button">Empezar</a>
+            </div>
+            <img src="{{ url_for('static', filename='image/index.jpg') }}" alt="Kanban Board Interface" class="hero-image">
+        </section>
 
-                        </div>
-                    </div>  
-
-                    <!--Tercer columna "Hecho"-->
-                    <div class="col-md-4">
-                        <div class="p-3 text-center border bg-light">
-                            <h1>Hecho</h1>
-                        </div>
-                        <div class="HechoContenido">
-
-                        </div>
+        <section class="accordion-wrapper">
+            <div class="accordion-item">
+                <button class="accordion">
+                    <h2>¿Qué es la metodología Kanban y en qué consiste?</h2>
+                </button>
+                <div class="panel">
+                    <div class="panel-content">
+                        <p>La metodología Kanban es un sistema de gestión de tareas que forma parte de las metodologías ágiles.
+                            Su propósito principal es supervisar y optimizar el flujo de trabajo desde el inicio hasta la finalización
+                            de las tareas, asegurando un proceso continuo y eficiente...</p>
+                        <img src="{{ url_for('static', filename='image/kanban_board.jpg')}}" alt="Metodología Kanban" class="panel-image">
                     </div>
                 </div>
             </div>
-        </main>
-        <footer>
-            <!-- place footer here -->
-        </footer>
-        <!-- Bootstrap JavaScript Libraries -->
-        <script
-            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-            crossorigin="anonymous"
-        ></script>
 
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-            crossorigin="anonymous"
-        ></script>
-    </body>
+            <div class="accordion-item">
+                <button class="accordion">
+                    <h2>¿Cómo implementar la metodología Kanban en tu empresa?</h2>
+                </button>
+                <div  class="accordion">
+                    <div>
+                        <p>Implementar Kanban en tu empresa es un proceso que requiere planificación y adaptación, pero que ofrece
+                            beneficios significativos en términos de eficiencia y claridad. A continuación, se detallan los pasos clave
+                            para integrar Kanban en tu entorno de trabajo:</p>
+                        <br>
+
+                        <h3>1. Definir el flujo de trabajo en cada proyecto</h3>
+                        <p>El primer paso es crear un tablero visual accesible para todo el equipo, donde se representen las diferentes fases
+                            del flujo de trabajo. Este tablero debe tener columnas que indiquen el estado de las tareas, desde su inicio hasta
+                            su finalización. Cada tarea se representa mediante una tarjeta que se mueve a través del tablero a medida que avanza
+                            por las diferentes etapas del proceso. Esto permite que, con un simple vistazo, todo el equipo pueda conocer el estado
+                            de los proyectos y asignar nuevas tareas de manera efectiva.</p>
+                        <br>
+
+                        <h3>2. Fases del ciclo de producción</h3>
+                        <p>Kanban se basa en el desarrollo incremental, dividiendo el trabajo en partes más manejables. Cada tarjeta en el
+                            tablero representa una parte del trabajo y contiene la información necesaria para que el equipo entienda la carga
+                            de trabajo y las prioridades. Este enfoque visual facilita la identificación de cuellos de botella y asegura que el
+                            trabajo avance de manera fluida a través de las distintas fases del proyecto.</p>
+                        <br>
+
+                        <h3>3. Stop starting, start finishing</h3>
+                        <p>Este lema es fundamental en Kanban: priorizar la finalización de las tareas en curso sobre el inicio de nuevas tareas.
+                            Limitar el trabajo en curso es crucial para mantener un flujo de trabajo controlado y evitar la sobrecarga del equipo.
+                            Al centrarse en completar tareas antes de asumir nuevas, se mejora la eficiencia y se reduce el riesgo de errores.</p>
+                        <br>
+
+                        <h3>4. Controlar el flujo</h3>
+                        <p>Kanban no se limita a un solo proyecto; puede aplicarse a múltiples proyectos y tareas simultáneamente. Esto permite
+                            a los equipos gestionar un flujo constante de trabajo, recopilando y analizando la información de cada tarjeta para
+                            realizar un seguimiento efectivo del progreso.</p>
+                    </div>
+                </div>
+                <br>
+        </section>
+
+        <section class="cta-section">
+            <h2>Todo lo que necesitas para mantenerte organizado y trabajar.</h2>
+            <div class="cta-buttons">
+                <a href="{{ url_for('InicioSesion') }}" class="cta-button">Registrate </a>
+                <a href="#" class="cta-button cta-secondary">Contacto</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='image/logo.png')}}" alt="ClickUp Logo">
+            <span>.</span>
+        </div>
+        <div>
+            <a href="{{  url_for('privacidad') }}">Seguridad</a>
+            <a href="{{  url_for('seguridad') }}">Privacidad</a>
+            <a href="">Terminos</a>
+        </div>
+    </footer>
+</div>
+</body>
 </html>

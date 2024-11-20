@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* Estilos generales */
+        .modal-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-container.active {
+            display: flex;
+        }
+
+        /* Estilos de la tarjeta */
+        .card {
+            background: white;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #1c9a91;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .card-description {
+            margin: 0.5rem 0 0;
+            color: #f0f0f0;
+            font-size: 0.875rem;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Estilos de los campos */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .input {
+            flex-grow: 1;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #1c9a91;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .button:hover {
+            background-color: #158880;
+        }
+
+        /* Estilos del enlace de invitación */
+        .link-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background-color: #f3f4f6;
+            border-radius: 4px;
+        }
+
+        .link-text {
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.875rem;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            padding: 0.25rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .icon-button:hover {
+            color: #374151;
+        }
+
+        /* Estilos de los íconos */
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Botón para abrir el modal -->
+<button id="openModalBtn" class="button">Invitar Usuario</button>
+
+<!-- Modal de invitación -->
+<div class="modal-container" id="inviteModal">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Invitar Usuarios</h2>
+            <p class="card-description">Invita a nuevos miembros a tu proyecto</p>
+        </div>
+        <div class="card-content">
+            <div class="input-group">
+                <label class="label" for="email">Correo Electrónico</label>
+                <div class="input-wrapper">
+                    <input
+                        type="email"
+                        id="email"
+                        class="input"
+                        placeholder="usuario@ejemplo.com"
+                    >
+                    <button class="button" onclick="handleInvite()">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        Invitar
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="label">Enlace de Invitación</label>
+                <div class="link-container">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
+                        <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                    </svg>
+                    <span class="link-text" id="inviteLink">https://tuapp.com/invitar/abc123</span>
+                    <button class="icon-button" onclick="copyLink()" id="copyButton">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Variables
+    const modal = document.getElementById('inviteModal');
+    const openModalBtn = document.getElementById('openModalBtn');
+    const emailInput = document.getElementById('email');
+    const copyButton = document.getElementById('copyButton');
+    const inviteLink = 'https://tuapp.com/invitar/abc123';
+
+    // Abrir modal
+    openModalBtn.addEventListener('click', () => {
+        modal.classList.add('active');
+    });
+
+    // Cerrar modal al hacer clic fuera
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+
+    // Manejar invitación
+    function handleInvite() {
+        const email = emailInput.value;
+        if (email) {
+            console.log('Invitación enviada a:', email);
+            emailInput.value = '';
+            // Aquí irían las llamadas a tu backend
+        }
+    }
+
+    // Copiar enlace
+    function copyLink() {
+        navigator.clipboard.writeText(inviteLink);
+        const originalIcon = copyButton.innerHTML;
+
+        // Cambiar al ícono de check
+        copyButton.innerHTML = `
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        `;
+
+        // Volver al ícono original después de 2 segundos
+        setTimeout(() => {
+            copyButton.innerHTML = originalIcon;
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
