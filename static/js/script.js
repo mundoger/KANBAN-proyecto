@@ -89,10 +89,9 @@ function displayColumns(columns){
         const taskButton = document.createElement('button');
         taskButton.className="btn btn-primary text-center m-3 w-100";
         taskButton.textContent="Añadir Tarea";
-        
-        
-
-
+        taskButton.onclick = function() {
+            showForm();
+        };
         //Botón de opciones
         const optionsButton = document.createElement("button");
         optionsButton.className = "btn btn-light btn-sm dropdown-toggle position-absolute top-0 end-0 m-2";
@@ -123,9 +122,6 @@ function displayColumns(columns){
         deleteLink.onclick = () => deleteColumn(column.id);
         deleteOption.appendChild(deleteLink);
 
-        
-
-
         optionsMenu.appendChild(editOption);
         optionsMenu.appendChild(deleteOption);
 
@@ -137,11 +133,193 @@ function displayColumns(columns){
         columnDiv.appendChild(columnElement);
         
         columnElement.appendChild(taskButton);
-
+        
         board.appendChild(columnDiv);
         
     });
 }
+
+function showForm() {
+    // Crear el contenedor principal
+    const divForm = document.createElement('div');
+    divForm.className = "bg-light d-flex justify-content-center align-items-center vh-100 position-fixed top-0 start-0 w-100";
+
+    // Crear el contenedor del formulario
+    const container = document.createElement('div');
+    container.className = "container w-50";
+
+    // Crear la tarjeta del formulario
+    const card = document.createElement('div');
+    card.className = "card shadow";
+
+    // Encabezado de la tarjeta
+    const cardHeader = document.createElement('div');
+    cardHeader.className = "card-header";
+
+    const title = document.createElement('h1');
+    title.className = "h4";
+    title.textContent = "Añadir Tarea";
+
+    cardHeader.appendChild(title);
+
+    // Cuerpo de la tarjeta
+    const cardBody = document.createElement('div');
+    cardBody.className = "card-body";
+
+    // Crear el formulario
+    const form = document.createElement('form');
+
+    // Campo Título
+    const titleGroup = document.createElement('div');
+    titleGroup.className = "mb-3";
+
+    const titleLabel = document.createElement('label');
+    titleLabel.className = "form-label";
+    titleLabel.setAttribute("for", "titulo");
+    titleLabel.textContent = "Título";
+
+    const titleInput = document.createElement('input');
+    titleInput.className = "form-control";
+    titleInput.setAttribute("type", "text");
+    titleInput.setAttribute("id", "titulo");
+    titleInput.setAttribute("name", "titulo");
+    titleInput.setAttribute("placeholder", "Título de la tarea.");
+    titleInput.setAttribute("required", ""); // Validación requerida
+
+    titleGroup.appendChild(titleLabel);
+    titleGroup.appendChild(titleInput);
+
+    // Campo Descripción
+    const descriptionGroup = document.createElement('div');
+    descriptionGroup.className = "mb-3";
+
+    const descriptionLabel = document.createElement('label');
+    descriptionLabel.className = "form-label";
+    descriptionLabel.setAttribute("for", "descripcion");
+    descriptionLabel.textContent = "Descripción";
+
+    const descriptionTextarea = document.createElement('textarea');
+    descriptionTextarea.className = "form-control";
+    descriptionTextarea.setAttribute("id", "descripcion");
+    descriptionTextarea.setAttribute("name", "descripcion");
+    descriptionTextarea.setAttribute("placeholder", "Descripción de la tarea.");
+    descriptionTextarea.setAttribute("rows", "4");
+    descriptionTextarea.setAttribute("required", ""); // Validación requerida
+
+    descriptionGroup.appendChild(descriptionLabel);
+    descriptionGroup.appendChild(descriptionTextarea);
+
+    // Campo Estado
+    const statusGroup = document.createElement('div');
+    statusGroup.className = "mb-3";
+
+    const statusLabel = document.createElement('label');
+    statusLabel.className = "form-label";
+    statusLabel.setAttribute("for", "estado");
+    statusLabel.textContent = "Estado";
+
+    const statusInput = document.createElement('input');
+    statusInput.className = "form-control";
+    statusInput.setAttribute("type", "text");
+    statusInput.setAttribute("id", "estado");
+    statusInput.setAttribute("name", "estado");
+    statusInput.setAttribute("placeholder", "En progreso");
+    statusInput.setAttribute("required", ""); // Validación requerida
+
+    statusGroup.appendChild(statusLabel);
+    statusGroup.appendChild(statusInput);
+
+    // Botón Guardar Cambios
+    const saveButton = document.createElement('button');
+    saveButton.setAttribute("type", "submit"); // Tipo submit para disparar validación
+    saveButton.className = "btn btn-primary";
+    saveButton.textContent = "Guardar Cambios";
+
+    // Botón Cancelar
+    const cancelButton = document.createElement('button');
+    cancelButton.className = "btn btn-danger";
+    cancelButton.setAttribute("type", "button");
+    cancelButton.textContent = "Cancelar";
+    cancelButton.onclick = function () {
+        divForm.remove(); // Cierra el formulario
+    };
+
+    // Manejar el envío del formulario
+    form.onsubmit = function (e) {
+        e.preventDefault(); // Evita el envío automático
+
+        // Validar campos (opcional si quieres validación adicional)
+        if (!form.checkValidity()) {
+            form.reportValidity(); // Mostrar errores si hay algún campo inválido
+            return;
+        }
+
+        const taskData = {
+            titulo: titleInput.value,
+            descripcion: descriptionTextarea.value,
+            estado: statusInput.value,
+        };
+
+        // Guardar en localStorage
+        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        tasks.push(taskData);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+
+        console.log("Tarea guardada:", taskData);
+        alert("Tarea guardada correctamente.");
+        divForm.remove(); // Cierra el formulario
+    };
+
+    // Agregar campos y botones al formulario
+    form.appendChild(titleGroup);
+    form.appendChild(descriptionGroup);
+    form.appendChild(statusGroup);
+    form.appendChild(saveButton);
+    form.appendChild(cancelButton);
+
+    // Agregar el formulario al cuerpo de la tarjeta
+    cardBody.appendChild(form);
+
+    // Ensamblar la tarjeta completa
+    card.appendChild(cardHeader);
+    card.appendChild(cardBody);
+
+    // Agregar tarjeta al contenedor
+    container.appendChild(card);
+
+    // Agregar contenedor principal
+    divForm.appendChild(container);
+
+    // Mostrar el formulario en el cuerpo del documento
+    document.body.appendChild(divForm);
+}
+
+
+//Guardar datos Tareas en el LocalStorage
+function saveTaskToLocalStorage(event){
+    event.preventDefault();
+
+    const title = document.getElementById('titulo').value;
+    const description = document.getElementById('descripcion').value;
+    const state = document.getElementById('estado').value;
+    const tags = document.getElementById('etiquetas').value;
+
+    const task = {
+        id:Date.now(),
+        title,
+        description,
+        state,
+        tags,
+    };
+
+    const tasks = JSON.parse(localStorage.getItem('tasks'))||[];
+
+    tasks.push(task);
+
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+}
+
 
 //Función para añadir una nueva columna
 function addColumn() {

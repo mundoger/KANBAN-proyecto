@@ -2,6 +2,47 @@ from flask import Flask, render_template, request, jsonify
 
 app=Flask(__name__)
 
+@app.route('/')
+def index():
+    return render_template("index.html")
+
+@app.route('/InicioSesion')
+def InicioSesion():
+    return render_template("InicioSesion.html")
+
+@app.route('/iniciar-pantalla', methods = ['GET'] )
+def submit():
+    email = request.args['email']
+    password = request.args['password']
+    user_data = DataObject(email, password)
+    return render_template("/principal.html", user = user_data)
+
+
+@app.route('/principal')
+def principal():
+    return render_template("principal.html")
+
+@app.route('/privacidad')
+def privacidad():
+    return render_template("privacidad.html")
+
+@app.route('/seguridad')
+def seguridad():
+    return render_template("seguridad.html")
+
+@app.route('/notificaciones')
+def notificaciones():
+    return render_template("notificaciones.html")
+
+@app.route('/perfil')
+def perfil():
+    return render_template("perfil.html")
+
+@app.route('/tareas')
+def tareas():
+    return render_template("tareas.html")
+
+
 #Definición de columnas
 kanban_columns = [
     {"id":"forDo","title":"Por hacer","tasks":[]},
@@ -10,16 +51,14 @@ kanban_columns = [
 ]
 
 
-@app.route('/')
-def index():
+@app.route('/kanban')
+def kanban():
     return render_template('kanban.html',columns=kanban_columns)
 
 @app.route("/get_columns")
 def get_columns():
     return jsonify(kanban_columns)
 
-
-#---------------COLUMNAS-------------------
 #---------------COLUMNAS-------------------
 @app.route('/api/columns', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def manage_columns():

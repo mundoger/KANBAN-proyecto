@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalles de la Tarea</title>
+  <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h1>Detalles de la Tarea</h1>
+      <h2>ID: 12345</h2>
+    </div>
+    <br>
+    <div class="card-content">
+      <form>
+        <div class="form-group">
+          <label for="titulo">Título</label>
+          <input type="text" id="titulo" name="titulo" value="Tarea de ejemplo">
+        </div>
+        <br>
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <textarea id="descripcion" name="descripcion">Esta es una descripción de la tarea</textarea>
+        </div>
+        <br>
+        <div class="form-group">
+          <label for="estado">Estado</label>
+          <input type="text" id="estado" name="estado" value="En progreso">
+        </div>
+        <br>
+        <div class="form-group">
+          <label for="fechaVencimiento">Fecha de Vencimiento</label>
+          <input type="date" id="fechaVencimiento" name="fechaVencimiento" value="2023-12-31">
+        </div>
+        <br>
+        <div class="form-group">
+          <label for="etiquetas">Etiquetas</label>
+          <input type="text" id="etiquetas" name="etiquetas" value="importante, urgente">
+        </div>
+        <br>
+        <button type="submit" class="btn">Guardar Cambios</button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>
