@@ -1,13 +1,13 @@
 // Función para cargar las columnas desde el LocalStorage
-function loadColumns(){
+function loadColumns() {
     const storedColumns = JSON.parse(localStorage.getItem('columns')) || [];
     fetch('/get_columns')
         .then(response => response.json())
         .then(serverColumns => {
-            const combinedColumns = [...serverColumns,...storedColumns];
-            displayColumns(combinedColumns);          
+            const combinedColumns = [...serverColumns, ...storedColumns];
+            displayColumns(combinedColumns);
         })
-        .catch(error=>console.error('Error al cargar columnas iniciales:',error));
+        .catch(error => console.error('Error al cargar columnas iniciales:', error));
 
 }
 
@@ -18,18 +18,18 @@ function editColumn(columnId) {
     const newTitle = prompt("Introduce el nuevo título de la columna:");
     if (newTitle) {
         const updatedColumns = storedColumns.map(column => {
-            if (column.id === columnId){
-                return {...column,title:newTitle};
+            if (column.id === columnId) {
+                return { ...column, title: newTitle };
             }
             return column;
         });
 
-        localStorage.setItem('columns',JSON.stringify(updatedColumns));
+        localStorage.setItem('columns', JSON.stringify(updatedColumns));
 
-        fetch('/api/columns',{
-            method:'PUT',
-            headers:{'Content-Type': 'application/json'},
-            body: JSON.stringify({id: columnId, title: newTitle}),
+        fetch('/api/columns', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: columnId, title: newTitle }),
         })
             .then(response => response.json())
             .then(data => {
@@ -41,17 +41,17 @@ function editColumn(columnId) {
 }
 
 //Función para eliminar columnas
-function deleteColumn(columnId){
+function deleteColumn(columnId) {
     const storedColumns = JSON.parse(localStorage.getItem('columns')) || [];
-    if (confirm("¿Estas seguro de que deseas eliminar esta columna?")){
+    if (confirm("¿Estas seguro de que deseas eliminar esta columna?")) {
         const updatedColumns = storedColumns.filter(column => column.id !== columnId);
 
-        localStorage.setItem('columns',JSON.stringify(updatedColumns));
+        localStorage.setItem('columns', JSON.stringify(updatedColumns));
 
-        fetch('/api/columns',{
-            method:'DELETE',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({id: columnId}),
+        fetch('/api/columns', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: columnId }),
         })
             .then(response => response.json())
             .then(data => {
@@ -62,35 +62,119 @@ function deleteColumn(columnId){
     }
 }
 
+function editTask(taskId) {
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const task = tasks.find(t => t.id === taskId); 
+
+    if (!task) {
+        return alert("Tarea no encontrada.");
+    }
+
+    showForm(null,task);
+}
+
+
+//Función para eliminar tareas
+function deleteTask(taskId){
+    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    if (confirm("¿Estás seguro de que deseas eliminar esta tarea?")){
+        const updatedTasks = storedTasks.filter(task => task.id !== taskId);
+
+        localStorage.setItem('tasks',JSON.stringify(updatedTasks));
+        alert("Tarea eliminada.");
+        displayColumns(JSON.parse(localStorage.getItem("columns"))); // Actualiza la vista
+    }
+    loadColumns();
+}
+
 
 //Mostrar columnas en el HTML
-function displayColumns(columns){
+function displayColumns(columns) {
     const board = document.getElementById("kanban-board");
-    board.innerHTML='';
+    board.innerHTML = '';
 
     const columnCount = columns.length;
-    const columnWidthClass = `col-md-${Math.floor(12/columnCount)}`;
+    const columnWidthClass = `col-md-${Math.floor(12 / columnCount)}`;
 
-    columns.forEach(column => {   
+    //Cargar tareas desde el LocalStorage
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+
+    columns.forEach(column => {
         //Crear el contenedor de la columna
-        const columnDiv=document.createElement("div");
+        const columnDiv = document.createElement("div");
         columnDiv.className = `${columnWidthClass} mb-4`;
         columnDiv.dataset.id = column.id;
 
         //Crear el encabezado de la columna
-        const headerDiv=document.createElement("div");
-        headerDiv.className="p-3  text-center border bg-light position-relative column-handle";
-        const title=document.createElement("h4");
-        title.textContent=column.title;
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "p-3  text-center border bg-light position-relative column-handle";
+        const title = document.createElement("h4");
+        title.textContent = column.title;
+
+        // Contenedor de tareas dentro de la columna
+        const taskContainer = document.createElement('div');
+        taskContainer.className = "kanban-task-container d-flex flex-column mt-3";  // Añadir la clase 'kanban-task-container'
+
+        //Mostrar tareas asociadas a la columna
+        const columnTasks = tasks.filter(task => task.columnId === column.id);
+        columnTasks.forEach(task => {
+            const taskCard = document.createElement('div');
+            taskCard.className = "card mb-2 kanban-task";
+            taskCard.innerHTML = `
+            <div id="kanban-task" class="card-body">
+                <h5 class="card-title">${task.title}</h5>
+                <p class="card-text">${task.description}</p>
+                <span class="badge bg-primary">${task.tags}</span>
+            </div>
+            `;
+            // Botón de opciones
+            const optionsButton = document.createElement("button");
+            optionsButton.className = "btn btn-light btn-sm dropdown-toggle position-absolute top-0 end-0 m-2";
+            optionsButton.setAttribute("data-bs-toggle", "dropdown");
+            optionsButton.setAttribute("aria-expanded", "false");
+            optionsButton.innerHTML = "&#8942"; // Icono de tres puntos
+
+            // Menú de opciones
+            const optionsMenu = document.createElement("ul");
+            optionsMenu.className = "dropdown-menu dropdown-menu-end";
+
+            const editOption = document.createElement("li");
+            const editLink = document.createElement("a");
+            editLink.className = "dropdown-item";
+            editLink.href = "#";
+            editLink.textContent = "Editar";
+            editLink.onclick = () => editTask(task.id);
+            editOption.appendChild(editLink);
+
+            // Opción Eliminar
+            const deleteOption = document.createElement("li");
+            const deleteLink = document.createElement("a");
+            deleteLink.className = "dropdown-item";
+            deleteLink.href = "#";
+            deleteLink.textContent = "Eliminar";
+            deleteLink.onclick = () => deleteTask(task.id);
+            deleteOption.appendChild(deleteLink);
+
+            // Agregar opciones al menú
+            optionsMenu.appendChild(editOption);
+            optionsMenu.appendChild(deleteOption);
+
+
+            taskCard.appendChild(optionsButton);
+            taskCard.appendChild(optionsMenu);
+
+            taskContainer.appendChild(taskCard);
+        });
 
         //Botón Añadir tarea
         const columnElement = document.createElement('div');
-        columnElement.className="d-flex justify-content-center align-items-center"
+        columnElement.className = "d-column justify-content-center align-items-center m-3"
         const taskButton = document.createElement('button');
-        taskButton.className="btn btn-primary text-center m-3 w-100";
-        taskButton.textContent="Añadir Tarea";
-        taskButton.onclick = function() {
-            showForm();
+        taskButton.className = "btn btn-primary text-center w-100";
+        taskButton.textContent = "Añadir Tarea";
+        taskButton.onclick = function () {
+            showForm(column.id);
         };
         //Botón de opciones
         const optionsButton = document.createElement("button");
@@ -98,7 +182,7 @@ function displayColumns(columns){
         optionsButton.setAttribute("data-bs-toggle", "dropdown");
         optionsButton.setAttribute("aria-expanded", "false");
         optionsButton.innerHTML = `<i class="fas fa-ellipsis-v"></i>`;
-        optionsButton.innerHTML= "&#8942";
+        optionsButton.innerHTML = "&#8942";
 
         //Menú de opciones
         const optionsMenu = document.createElement("ul");
@@ -106,10 +190,10 @@ function displayColumns(columns){
 
         //Opción editar
         const editOption = document.createElement("li");
-        const editLink=document.createElement("a");
-        editLink.className="dropdown-item";
+        const editLink = document.createElement("a");
+        editLink.className = "dropdown-item";
         editLink.href = "#";
-        editLink.textContent="Editar";
+        editLink.textContent = "Editar";
         editLink.onclick = () => editColumn(column.id);
         editOption.appendChild(editLink);
 
@@ -127,49 +211,47 @@ function displayColumns(columns){
 
         headerDiv.appendChild(title);
         headerDiv.appendChild(optionsButton);
+
         headerDiv.appendChild(optionsMenu);
 
-        columnDiv.appendChild(headerDiv); 
-        columnDiv.appendChild(columnElement);
-        
         columnElement.appendChild(taskButton);
-        
+        columnElement.appendChild(taskContainer);
+
+        columnDiv.appendChild(headerDiv);
+        columnDiv.appendChild(columnElement);
+
+        columnElement.appendChild(taskButton);
+
         board.appendChild(columnDiv);
-        
+
     });
 }
 
-function showForm() {
-    // Crear el contenedor principal
+// Función para mostrar el formulario de tarea
+function showForm(columnId, task = null) {
     const divForm = document.createElement('div');
     divForm.className = "bg-light d-flex justify-content-center align-items-center vh-100 position-fixed top-0 start-0 w-100";
 
-    // Crear el contenedor del formulario
     const container = document.createElement('div');
     container.className = "container w-50";
 
-    // Crear la tarjeta del formulario
     const card = document.createElement('div');
     card.className = "card shadow";
 
-    // Encabezado de la tarjeta
     const cardHeader = document.createElement('div');
     cardHeader.className = "card-header";
 
     const title = document.createElement('h1');
     title.className = "h4";
-    title.textContent = "Añadir Tarea";
+    title.textContent = task ? "Editar Tarea" : "Añadir Tarea"; // Usamos el operador ternario para manejar si es editar o crear
 
     cardHeader.appendChild(title);
 
-    // Cuerpo de la tarjeta
     const cardBody = document.createElement('div');
     cardBody.className = "card-body";
 
-    // Crear el formulario
     const form = document.createElement('form');
 
-    // Campo Título
     const titleGroup = document.createElement('div');
     titleGroup.className = "mb-3";
 
@@ -185,11 +267,11 @@ function showForm() {
     titleInput.setAttribute("name", "titulo");
     titleInput.setAttribute("placeholder", "Título de la tarea.");
     titleInput.setAttribute("required", ""); // Validación requerida
+    titleInput.value = task ? task.title : ""; // Precarga el título si existe la tarea
 
     titleGroup.appendChild(titleLabel);
     titleGroup.appendChild(titleInput);
 
-    // Campo Descripción
     const descriptionGroup = document.createElement('div');
     descriptionGroup.className = "mb-3";
 
@@ -205,117 +287,90 @@ function showForm() {
     descriptionTextarea.setAttribute("placeholder", "Descripción de la tarea.");
     descriptionTextarea.setAttribute("rows", "4");
     descriptionTextarea.setAttribute("required", ""); // Validación requerida
+    descriptionTextarea.value = task ? task.description : "" // Si hay tarea, precargamos la descripción
 
     descriptionGroup.appendChild(descriptionLabel);
     descriptionGroup.appendChild(descriptionTextarea);
 
-    // Campo Estado
-    const statusGroup = document.createElement('div');
-    statusGroup.className = "mb-3";
+    const tagsGroup = document.createElement('div');
+    tagsGroup.className = "mb-3";
 
-    const statusLabel = document.createElement('label');
-    statusLabel.className = "form-label";
-    statusLabel.setAttribute("for", "estado");
-    statusLabel.textContent = "Estado";
+    const tagsLabel = document.createElement('label');
+    tagsLabel.className = "form-label";
+    tagsLabel.setAttribute("for", "etiquetas");
+    tagsLabel.textContent = "Etiquetas";
 
-    const statusInput = document.createElement('input');
-    statusInput.className = "form-control";
-    statusInput.setAttribute("type", "text");
-    statusInput.setAttribute("id", "estado");
-    statusInput.setAttribute("name", "estado");
-    statusInput.setAttribute("placeholder", "En progreso");
-    statusInput.setAttribute("required", ""); // Validación requerida
+    const tagsInput = document.createElement('input');
+    tagsInput.className = "form-control";
+    tagsInput.setAttribute("type", "text");
+    tagsInput.setAttribute("id", "etiquetas");
+    tagsInput.setAttribute("name", "etiquetas");
+    tagsInput.setAttribute("placeholder", "Ej: Importante, Medio");
+    tagsInput.setAttribute("required", "")
+    tagsInput.value = task ? task.tags : "" // Si hay tarea, precargamos las etiquetas
 
-    statusGroup.appendChild(statusLabel);
-    statusGroup.appendChild(statusInput);
+    tagsGroup.appendChild(tagsLabel);
+    tagsGroup.appendChild(tagsInput);
 
-    // Botón Guardar Cambios
     const saveButton = document.createElement('button');
-    saveButton.setAttribute("type", "submit"); // Tipo submit para disparar validación
+    saveButton.setAttribute("type", "submit"); 
     saveButton.className = "btn btn-primary";
     saveButton.textContent = "Guardar Cambios";
 
-    // Botón Cancelar
     const cancelButton = document.createElement('button');
     cancelButton.className = "btn btn-danger";
     cancelButton.setAttribute("type", "button");
     cancelButton.textContent = "Cancelar";
     cancelButton.onclick = function () {
-        divForm.remove(); // Cierra el formulario
+        divForm.remove(); // Elimina el formulario si el usuario cancela
     };
 
-    // Manejar el envío del formulario
     form.onsubmit = function (e) {
-        e.preventDefault(); // Evita el envío automático
-
-        // Validar campos (opcional si quieres validación adicional)
-        if (!form.checkValidity()) {
-            form.reportValidity(); // Mostrar errores si hay algún campo inválido
-            return;
-        }
-
+        e.preventDefault(); // Evita el comportamiento predeterminado de submit
         const taskData = {
-            titulo: titleInput.value,
-            descripcion: descriptionTextarea.value,
-            estado: statusInput.value,
+            id: task ? task.id : Date.now(), // Usamos el ID de la tarea si está presente, si no generamos uno nuevo
+            title: titleInput.value,
+            description: descriptionTextarea.value,
+            tags: tagsInput.value,
         };
 
-        // Guardar en localStorage
-        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-        tasks.push(taskData);
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-
-        console.log("Tarea guardada:", taskData);
-        alert("Tarea guardada correctamente.");
-        divForm.remove(); // Cierra el formulario
+        saveTaskToLocalStorage(taskData, columnId); // Guardamos la tarea
+        loadColumns(); // Actualizamos las columnas para reflejar el cambio
+        divForm.remove(); // Eliminamos el formulario después de guardar
     };
 
-    // Agregar campos y botones al formulario
     form.appendChild(titleGroup);
     form.appendChild(descriptionGroup);
-    form.appendChild(statusGroup);
+    form.appendChild(tagsGroup);
     form.appendChild(saveButton);
     form.appendChild(cancelButton);
 
-    // Agregar el formulario al cuerpo de la tarjeta
     cardBody.appendChild(form);
-
-    // Ensamblar la tarjeta completa
     card.appendChild(cardHeader);
     card.appendChild(cardBody);
 
-    // Agregar tarjeta al contenedor
     container.appendChild(card);
-
-    // Agregar contenedor principal
     divForm.appendChild(container);
 
-    // Mostrar el formulario en el cuerpo del documento
     document.body.appendChild(divForm);
 }
 
 
 //Guardar datos Tareas en el LocalStorage
-function saveTaskToLocalStorage(event){
-    event.preventDefault();
+function saveTaskToLocalStorage(task, columnId) {
+    
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
-    const title = document.getElementById('titulo').value;
-    const description = document.getElementById('descripcion').value;
-    const state = document.getElementById('estado').value;
-    const tags = document.getElementById('etiquetas').value;
+     // Buscar la tarea a editar por su ID
+     const existingTaskIndex = tasks.findIndex(t => t.id === task.id);
 
-    const task = {
-        id:Date.now(),
-        title,
-        description,
-        state,
-        tags,
-    };
-
-    const tasks = JSON.parse(localStorage.getItem('tasks'))||[];
-
-    tasks.push(task);
-
+     // Si la tarea existe, actualizamos sus datos
+    if (existingTaskIndex !== -1) {
+        tasks[existingTaskIndex] = { ...tasks[existingTaskIndex], ...task };
+    } else {
+        // Si no existe, la agregamos como una nueva tarea
+        tasks.push({ ...task, columnId });
+    }
     localStorage.setItem('tasks', JSON.stringify(tasks));
 
 }
@@ -352,7 +407,7 @@ function addColumn() {
             storedColumns.push(newColumn);
             localStorage.setItem('columns', JSON.stringify(storedColumns));
 
-            
+
             const combinedColumns = [...serverColumns, ...storedColumns];
             displayColumns(combinedColumns);
 
@@ -367,54 +422,131 @@ function addColumn() {
 //Función para mover columnas
 document.addEventListener('DOMContentLoaded', () => {
     const kanbanBoard = document.getElementById('kanban-board');
+    const taskContainers  = Array.from(kanbanBoard.getElementsByClassName('kanban-task-container'))
 
-    // Inicializar SortableJS en el contenedor de columnas
-    Sortable.create(kanbanBoard, {
-        animation: 150, // Efecto suave al arrastrar
-        ghostClass: 'sortable-ghost', // Clase para el elemento arrastrado
-        handle: '.column-handle', // Define un "handle" para arrastrar
+     // Hacer las columnas arrastrables
+     Sortable.create(kanbanBoard, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        handle: '.column-handle',
         onEnd: function (event) {
-            // Callback después de mover una columna
             console.log('Columna movida de', event.oldIndex, 'a', event.newIndex);
-
-            // Aquí puedes actualizar el orden de las columnas en localStorage o servidor
             moveColumn();
         },
     });
+
+    function initializeTaskContainers() {
+        // Seleccionar todos los contenedores de tareas
+        const taskContainers = document.querySelectorAll('.kanban-task-container');
+        
+        // Inicializar Sortable para cada contenedor de tareas
+        taskContainers.forEach(container => {
+            Sortable.create(container, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                group: 'tasks', // Esto permite mover tareas entre columnas
+                draggable: '.kanban-task', // Clase de los elementos arrastrables
+                onEnd: function (event) {
+                    console.log('Tarea movida de', event.from.dataset.id, 'a', event.to.dataset.id);
+                    moveTask(event);
+                },
+            });
+        });
+    }
+
+    // Inicializar los contenedores al cargar la página
+    loadColumns();
+    initializeTaskContainers();
+
+    
+
+    function moveColumn() {
+        const movedColumn = Array.from(document.getElementById('kanban-board').children);
+    
+        const newOrder = movedColumn.map(column => column.dataset.id);
+    
+        const storedColumns = JSON.parse(localStorage.getItem('columns')) || [];
+    
+        const reorderedColumns = newOrder
+            .map(id => storedColumns.find(column => column && column.id === id)).filter(column => column);
+        // Guardar el nuevo orden
+        localStorage.setItem('columns', JSON.stringify(reorderedColumns));
+    
+        console.log('Nuevo orden de columnas guardado:', reorderedColumns);
+    
+        // Sincronizar el nuevo orden con el servidor
+        fetch('/api/columns', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order: newOrder }), // Enviar el nuevo orden al servidor
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Nuevo orden sincronizado con el servidor:', data);
+            })
+            .catch(error => console.error('Error al sincronizar el orden con el servidor:', error));
+    }
+
+    
+    function moveTask(event) {
+        // Obtener las tareas actuales del localStorage
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        
+        // Obtener el ID de la tarea movida (del elemento arrastrado)
+        const taskElement = event.item;
+        const taskTitle = taskElement.querySelector('.card-title').textContent;
+        
+        // Encontrar la tarea en el array de tareas
+        const taskToMove = tasks.find(task => task.title === taskTitle);
+        
+        if (taskToMove) {
+            // Obtener el ID de la columna destino
+            const newColumnId = event.to.closest('.col-md-2, .col-md-3, .col-md-4, .col-md-6').dataset.id;
+            
+            // Actualizar la columna de la tarea
+            taskToMove.columnId = newColumnId;
+            
+            // Actualizar el orden de las tareas en la nueva columna
+            const newTaskOrder = Array.from(event.to.children).map(taskElement => {
+                const title = taskElement.querySelector('.card-title').textContent;
+                return tasks.find(task => task.title === title);
+            });
+            
+            // Filtrar las tareas que no están en la columna actual
+            const otherTasks = tasks.filter(task => task.columnId !== newColumnId);
+            
+            // Combinar las tareas reordenadas con las demás tareas
+            const updatedTasks = [...otherTasks, ...newTaskOrder.filter(Boolean)];
+            
+            // Guardar en localStorage
+            localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+            
+            console.log('Tarea movida exitosamente:', {
+                taskId: taskToMove.id,
+                newColumnId: newColumnId,
+                newOrder: newTaskOrder.map(t => t?.id)
+            });
+        }
+    }
+     // Observador para reinicializar Sortable cuando se añadan nuevas columnas o tareas
+     const observer = new MutationObserver(() => {
+        initializeTaskContainers();
+    });
+
+    // Observar cambios en el kanban-board
+    observer.observe(kanbanBoard, {
+        childList: true,
+        subtree: true
+    });
 });
 
-function moveColumn(){
-    const movedColumn = Array.from(document.getElementById('kanban-board').children);
 
-    const newOrder = movedColumn.map(column => column.dataset.id);
-
-    const storedColumns=JSON.parse(localStorage.getItem('columns')) || [];
-
-    const reorderedColumns=newOrder
-    .map(id => storedColumns.find(column => column && column.id === id)).filter(column => column);
-    // Guardar el nuevo orden
-    localStorage.setItem('columns', JSON.stringify(reorderedColumns));
-
-    console.log('Nuevo orden de columnas guardado:', reorderedColumns);
-
-    // Sincronizar el nuevo orden con el servidor
-    fetch('/api/columns', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ order: newOrder }), // Enviar el nuevo orden al servidor
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Nuevo orden sincronizado con el servidor:', data);
-        })
-        .catch(error => console.error('Error al sincronizar el orden con el servidor:', error));
-}
 
 
 
 
 //Inicializar el tablero al cargar la página
-document.addEventListener('DOMContentLoaded',loadColumns);
+document.addEventListener('DOMContentLoaded', loadColumns);
 
 
 // // Función para crear un elemento de columna en el DOM
